@@ -6,7 +6,7 @@ import useWebSocket from './useWebsocket'
 // Component imports
 import Login from './components/auth/Login.jsx';
 import Register from './components/auth/Register.jsx';
-import Navbar from './components/layout/Navbar.jsx';
+
 import Dashboard from './components/dashboard/Dashboard.jsx';
 import Error from './components/common/Error.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
@@ -23,7 +23,7 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-background text-text">
-        <Navbar />
+   
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
