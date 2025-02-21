@@ -14,6 +14,15 @@ dotenv.config();
 
 // Initialize express app
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',  // Allow your React app's URL (adjust accordingly)
+    methods: ['GET', 'POST'],
+  }
+});
+
+
 
 // Middleware
 app.use(cors());  // Enable CORS for all routes
@@ -36,6 +45,29 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+// });
+
+server.listen(PORT,()=>{
+  console.log(`Server AND SOCKET is running on port ${PORT}`);
 });
+
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  io.emit('notification', "added you");
+  // Listen for custom events
+  socket.on('message', (message) => {
+      console.log('Received message: ', message);
+      // Emit the message to all connected clients
+
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+      console.log('user disconnected');
+  });
+}); 
+
+export {io};
