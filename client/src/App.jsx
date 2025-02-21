@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
+// Component imports
+import Login from './components/auth/Login.jsx';
+import Register from './components/auth/Register.jsx';
+import Navbar from './components/layout/Navbar.jsx';
+import Dashboard from './components/dashboard/Dashboard.jsx';
+import Error from './components/common/Error.jsx';
+import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { token } = useSelector(state => state.auth);
+  const { mode } = useSelector(state => state.theme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', mode);
+  }, [mode]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="min-h-screen bg-background text-text">
+        <Navbar />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
+          <Route path="/register" element={!token ? <Register /> : <Navigate to="/dashboard" />} />
+          
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          
+          {/* Admin Routes */}
+          <Route path="/admin/*" element={
+            <ProtectedRoute allowedRoles={['ADMIN']}>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          
+          {/* Error Routes */}
+          <Route path="/unauthorized" element={<Error code="403" />} />
+          <Route path="/error" element={<Error code="500" />} />
+          <Route path="/not-found" element={<Error code="404" />} />
+          
+          {/* Home Route */}
+          <Route path="/" element={<Navigate to={token ? "/dashboard" : "/login"} />} />
+          
+          {/* Catch All */}
+          <Route path="*" element={<Navigate to="/not-found" />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -31,7 +31,7 @@ const OrderSchema = new mongoose.Schema({
     donorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false,
+        required: true,
     },
     ngoId: {
         type: mongoose.Schema.Types.ObjectId,
