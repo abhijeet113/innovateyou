@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import useWebSocket from './useWebsocket'
 
 // Component imports
 import Login from './components/auth/Login.jsx';
@@ -11,6 +12,7 @@ import Error from './components/common/Error.jsx';
 import ProtectedRoute from './components/common/ProtectedRoute.jsx';
 
 function App() {
+  console.log(useWebSocket());
   const { token } = useSelector(state => state.auth);
   const { mode } = useSelector(state => state.theme);
 

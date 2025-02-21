@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
+import {io} from '../index.js'
 
 // Generate JWT Token
 const generateToken = (userId) => {
@@ -20,6 +21,7 @@ const formatUserResponse = (user) => {
 
 export const register = async (req, res) => {
     try {
+
         const { email, username, password, role } = req.body;
 
         // Check if user exists
@@ -48,6 +50,7 @@ export const register = async (req, res) => {
             user: formatUserResponse(user)
         });
     } catch (error) {
+        console.log(error.message)
         res.status(500).json({
             success: false,
             message: error.message
@@ -58,10 +61,12 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        io.emit("notification","login attempt found");
         // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
+            console.log("user not found");
+            
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials'
