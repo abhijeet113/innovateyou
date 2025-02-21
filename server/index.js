@@ -4,6 +4,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
+import http from 'http';
+import { Server } from 'socket.io';
+
+
 
 // Load environment variables
 dotenv.config();
