@@ -3,9 +3,19 @@ import User from '../models/user.model.js';
 
 // Generate JWT Token
 const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    return jwt.sign({ id: userId.toString() }, process.env.JWT_SECRET, {
         expiresIn: '30d'
     });
+};
+
+// Helper function to format user response
+const formatUserResponse = (user) => {
+    return {
+        id: user._id.toString(),
+        email: user.email,
+        username: user.username,
+        role: user.role
+    };
 };
 
 export const register = async (req, res) => {
@@ -35,12 +45,7 @@ export const register = async (req, res) => {
         res.status(201).json({
             success: true,
             token,
-            user: {
-                id: user._id,
-                email: user.email,
-                username: user.username,
-                role: user.role
-            }
+            user: formatUserResponse(user)
         });
     } catch (error) {
         console.log(error.message)
@@ -79,12 +84,7 @@ export const login = async (req, res) => {
         res.json({
             success: true,
             token,
-            user: {
-                id: user._id,
-                email: user.email,
-                username: user.username,
-                role: user.role
-            }
+            user: formatUserResponse(user)
         });
     } catch (error) {
         res.status(500).json({
